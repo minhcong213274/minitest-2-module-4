@@ -25,6 +25,16 @@ public class Picture {
     public Picture() {
     }
 
+    public Picture(Long pictureId, String name, int height, int weight, String material, String description, int price) {
+        this.pictureId = pictureId;
+        this.name = name;
+        this.height = height;
+        this.weight = weight;
+        this.material = material;
+        this.description = description;
+        this.price = price;
+    }
+
     public Picture(Long pictureId, String name, int height, int weight, String material, String description, int price, Set<Category> category) {
         this.pictureId = pictureId;
         this.name = name;

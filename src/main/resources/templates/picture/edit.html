@@ -1,10 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Edit picture</title>
 </head>
 <body>
-
+<h1>Edit picture</h1>
+<p>
+    <a href="/pictures">picture list</a>
+</p>
+<th:block th:if="${message}">
+    <p th:text="${message}"></p>
+</th:block>
+<form th:action="@{/edit-picture}" th:object="${picture}" method="post">
+    <input th:type="hidden" name="id" th:field="*{pictureId}">
+    <table>
+        <tr>
+            <td>picture name:</td>
+            <td><input type="text" th:field="*{name}"/></td>
+        </tr>
+        <tr>
+            <td>height picture:</td>
+            <td><input type="number" th:field="*{height}"/></td>
+        </tr>
+        <tr>
+            <td>weight picture:</td>
+            <td><input type="number" th:field="*{weight}"/></td>
+        </tr>
+        <tr>
+            <td>material picture:</td>
+            <td><input type="text" th:field="*{material}"/></td>
+        </tr>
+        <tr>
+            <td>description:</td>
+            <td><input type="text" th:field="*{description}"/></td>
+        </tr>
+        <tr>
+            <td>Price:</td>
+            <td><input type="number" th:field="*{price}"/></td>
+        </tr>
+        <tr>
+            <td>Category:</td>
+            <td>
+                <div th:each="p : ${category}">
+                    <input type="checkbox" th:field="*{category}" th:value="${p.categoryId}" th:id="'category-' + ${p.categoryId}">
+                    <label th:for="'category-' + ${p.categoryId}" th:text="${p.name}"></label><br>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Update picture"></td>
+        </tr>
+    </table>
+</form>
 </body>
 </html>

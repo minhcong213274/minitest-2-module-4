@@ -25,9 +25,9 @@ public class CategoryController {
 
     @GetMapping("/category")
     public ModelAndView listCategory() {
-        Iterable<Category> category = iCategoryService.findAll();
+        Iterable<Category> categorys = iCategoryService.findAll();
         ModelAndView modelAndView = new ModelAndView("/category/list");
-        modelAndView.addObject("category", category);
+        modelAndView.addObject("categorys", categorys);
         return modelAndView;
     }
 
@@ -94,9 +94,12 @@ public class CategoryController {
     }
 
     @PostMapping("/delete-category")
-    public String deleteProvince(@ModelAttribute("category") Category category) {
+    public ModelAndView deleteProvince(@ModelAttribute("category") Category category) {
         iCategoryService.remove(category.getCategoryId());
-        return "redirect:category";
+        Iterable<Category> categorys = iCategoryService.findAll();
+        ModelAndView modelAndView = new ModelAndView("/category/list");
+        modelAndView.addObject("categorys", categorys);
+        return modelAndView;
     }
     @GetMapping("/view-category/{id}")
     public ModelAndView viewProvince(@PathVariable("id") Long id){

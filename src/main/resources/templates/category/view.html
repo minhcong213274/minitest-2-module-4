@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>View category</title>
+</head>
+<body>
+<h1>View producer: <span th:text="${category.name}"></span></h1>
+<a href="/category">category list</a>
+<table border="1">
+    <tr>
+        <th>picture name</th>
+        <th>picture height</th>
+        <th>picture weight</th>
+        <th>picture material</th>
+        <th>picture description</th>
+        <th>price</th>
+    </tr>
+    <th:block th:each="picture : ${pictures}">
+        <tr>
+            <td th:text="${picture.name}"></td>
+            <td th:text="${picture.height}"></td>
+            <td th:text="${picture.weight}"></td>
+            <td th:text="${picture.material}"></td>
+            <td th:text="${picture.description}"></td>
+            <td th:text="${picture.price}"></td>
+        </tr>
+    </th:block>
+</table>
+</body>
+</html>
