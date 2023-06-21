@@ -111,7 +111,7 @@
                     let content = "" ;
                     for (let i = 0; i < data.length; i++) {
                         console.log(data[i])
-                        content +=`<input type="checkbox" id="${data[i].categoryId}" name="categoryIds" value="${data[i].name}">${data[i].name}`
+                        content +=`<input type="checkbox" id="${data[i].categoryId}" name="categoryIds" value="${data[i].categoryId}">${data[i].name}`
                     }
                     document.getElementById('form-group').innerHTML = content;
                 }
@@ -161,52 +161,51 @@
                     $('#material').val(picture.material);
                     $('#description').val(picture.description);
                     $('#price').val(picture.price);
-                    let selectedCategoryIds = picture.categories.map(category => category.id);
+                    $('#idItem').val(id);
+                    let selectedCategoryIds = picture.category.map(category => category.categoryId);
                     $('input[name="categoryIds"]').each(function () {
                         if (selectedCategoryIds.includes(parseInt($(this).val()))) {
                             $(this).prop('checked', true);
+                        } else {
+                            $(this).prop('checked', false);
                         }
                     });
+                }
+            });
+        }
+        function postEdit() {
+            // Lấy thông tin hình ảnh sau khi chỉnh sửa
+            let name = $('#name').val();
+            let height = $('#height').val();
+            let weight = $('#weight').val();
+            let material = $('#material').val();
+            let description = $('#description').val();
+            let price = $('#price').val();
+            let categories = [];
+            $('input[name="categoryIds"]:checked').each(function () {
+                categories.push({id: parseInt($(this).val())});
+            });
+            let id = $('#idItem').val();
+            let updatedPicture = {
+                id: id,
+                name: name,
+                height: height,
+                weight: weight,
+                material: material,
+                description: description,
+                price: price
+            };
 
-                    // Thêm sự kiện submit cho form chỉnh sửa
-                    $('#add-picture').off('submit').on('submit', function (event) {
-                        event.preventDefault();
-
-
-                        // Lấy thông tin hình ảnh sau khi chỉnh sửa
-                        let name = $('#name').val();
-                        let height = $('#height').val();
-                        let weight = $('#weight').val();
-                        let material = $('#material').val();
-                        let description = $('#description').val();
-                        let price = $('#price').val();
-                        let categories = [];
-                        $('input[name="categoryIds"]:checked').each(function () {
-                            categories.push({id: parseInt($(this).val())});
-                        });
-                        let updatedPicture = {
-                            id: picture.pictureId,
-                            name: name,
-                            height: height,
-                            weight: weight,
-                            material: material,
-                            description: description,
-                            price: price
-                        };
-
-                        $.ajax({
-                            headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                            },
-                            type: "PUT",
-                            data: JSON.stringify(updatedPicture),
-                            url: "http://localhost:8080/api/picture/" + id,
-                            success: function () {
-                                successHandler();
-                            }
-                        });
-                    });
+            $.ajax({
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                type: "PUT",
+                data: JSON.stringify(updatedPicture),
+                url: "http://localhost:8080/api/picture/" + id,
+                success: function () {
+                    successHandler();
                 }
             });
         }
@@ -250,9 +249,11 @@
                 </div>
             </td>
         </tr>
+        <input type="hidden" id="idItem">
         <tr>
             <td></td>
-            <td><input type="button" value="Save" onclick="addNewPicture()"></td>
+            <td><input type="button" value="Add" onclick="addNewPicture()"></td>
+            <td><input type="button" value="update" id="edit_button" onclick="postEdit()"></td>
         </tr>
     </table>
 </form>
