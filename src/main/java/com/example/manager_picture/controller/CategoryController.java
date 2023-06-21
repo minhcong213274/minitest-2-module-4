@@ -37,14 +37,6 @@ public class CategoryController {
         modelAndView.addObject("category", new Category());
         return modelAndView;
     }
-//    @GetMapping("/create-producers")
-//    public ResponseEntity<Iterable<Producer>> findAllCustomer() {
-//        List<Producer> customers = (List<Producer>) producerService.findAll();
-//        if (customers.isEmpty()) {
-//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        }
-//        return new ResponseEntity<>(customers, HttpStatus.OK);
-//    }
 
     @PostMapping("/create-category")
     public ModelAndView saveProvince(@ModelAttribute("category") Category category) {

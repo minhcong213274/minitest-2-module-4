@@ -37,4 +37,9 @@ public class PictureService implements IPictureService {
         return iPictureRepository.findAllByCategory(category);
     }
 
+    @Override
+    public Iterable<Picture> findAllByNameContaining(String name) {
+        return iPictureRepository.findAllByNameContaining(name);
+    }
+
 }

@@ -41,9 +41,10 @@
         <tr>
             <td> category:</td>
             <td>
-                <select th:field="*{category}">
-                    <option th:each="p : ${category}" th:value="${p.categoryId}" th:text="${p.name}"></option>
-                </select>
+                <div th:each="p : ${category}">
+                    <input type="checkbox" th:field="*{category}" th:value="${p.categoryId}" >
+                    <label  th:text="${p.name}"></label><br>
+                </div>
             </td>
         </tr>
         <tr>

@@ -17,8 +17,8 @@ public class Picture {
     private String material;
     private String description;
     private int price;
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "picture_category",joinColumns = @JoinColumn(name = "pictureId"),inverseJoinColumns = @JoinColumn(name = "categoryId"))
+    @ManyToMany
+    @JoinTable(name = "picture_category",joinColumns = @JoinColumn(name = "pictureId"),inverseJoinColumns = @JoinColumn(name = "categoryId",nullable = true))
     @JsonBackReference
     private Set<Category> category;
 

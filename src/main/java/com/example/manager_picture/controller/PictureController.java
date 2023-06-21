@@ -4,19 +4,72 @@ import com.example.manager_picture.model.Category;
 import com.example.manager_picture.model.Picture;
 import com.example.manager_picture.service.ICategoryService;
 import com.example.manager_picture.service.IPictureService;
+import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
+@CrossOrigin("*")
 public class PictureController {
 
     @Autowired
     private IPictureService iPictureService;
     @Autowired
     private ICategoryService iCategoryService;
+    @GetMapping("/categories")
+    public ResponseEntity<Set<Category>> getCategories() {
+        Set<Category> categories = (Set<Category>) iCategoryService.findAll();
+        return ResponseEntity.ok().body(categories);
+    }
+    @GetMapping
+    public ResponseEntity<Iterable<Picture>> allPicture() {
+        return new ResponseEntity<>(iPictureService.findAll(), HttpStatus.OK);
+    }
+
+    @PostMapping("/api/picture")
+    public ResponseEntity<Picture> createSmartphone(@RequestBody Picture picture) {
+        return new ResponseEntity<>(iPictureService.save(picture), HttpStatus.CREATED);
+    }
+    @DeleteMapping("/api/picture/{id}")
+    public ResponseEntity<Picture> deletePicture(@PathVariable Long id) {
+        Optional<Picture> pictureOptional = iPictureService.findById(id);
+        if (!pictureOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        iPictureService.remove(id);
+        return new ResponseEntity<>(pictureOptional.get(), HttpStatus.NO_CONTENT);
+    }
+    @GetMapping("/api/picture/{id}")
+    public ResponseEntity<Picture> getPictureById(@PathVariable Long id) {
+        Optional<Picture> pictureOptional = iPictureService.findById(id);
+        if (!pictureOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(pictureOptional.get(), HttpStatus.OK);
+    }
+    @PutMapping("/api/picture/{id}")
+    public ResponseEntity<Picture> updatePicture(@PathVariable Long id, @RequestBody Picture picture) {
+        Optional<Picture> pictureOptional = iPictureService.findById(id);
+        if (!pictureOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Picture updatedPicture = pictureOptional.get();
+        updatedPicture.setName(picture.getName());
+        updatedPicture.setHeight(picture.getHeight());
+        updatedPicture.setWeight(picture.getWeight());
+        updatedPicture.setMaterial(picture.getMaterial());
+        updatedPicture.setDescription(picture.getDescription());
+        updatedPicture.setPrice(picture.getPrice());
+        return new ResponseEntity<>(iPictureService.save(updatedPicture), HttpStatus.OK);
+    }
+
 
     @ModelAttribute("category")
     public Iterable<Category> category(){
@@ -30,14 +83,7 @@ public class PictureController {
         modelAndView.addObject("picture", new Picture());
         return modelAndView;
     }
-//@GetMapping("/create-product")
-//public ResponseEntity<Iterable<Product>> findAllCustomer() {
-//    List<Product> customers = (List<Product>) productService.findAll();
-//    if (customers.isEmpty()) {
-//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//    }
-//    return new ResponseEntity<>(customers, HttpStatus.OK);
-//}
+
 
     @PostMapping("/create-picture")
     public ModelAndView saveCustomer(@ModelAttribute("picture") Picture picture) {
@@ -47,8 +93,15 @@ public class PictureController {
         modelAndView.addObject("message", "New picture created successfully");
         return modelAndView;
     }
+    @PostMapping("/search-picture")
+    public ModelAndView listPictureByName(@ModelAttribute("search") String name) {
+        ModelAndView modelAndView = new ModelAndView("/picture/list");
+        modelAndView.addObject("pictures", iPictureService.findAllByNameContaining(name));
+        modelAndView.addObject("message", "New picture created successfully");
+        return modelAndView;
+    }
     @GetMapping("/pictures")
-    public ModelAndView listCustomers() {
+    public ModelAndView listPicture() {
         ModelAndView modelAndView = new ModelAndView("picture/list");
         modelAndView.addObject("pictures", iPictureService.findAll());
         return modelAndView;

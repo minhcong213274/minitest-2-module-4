@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <title>List Smartphone</title>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script type="text/javascript">
+
+    function addNewPicture() {
+      //lay du lieu
+      let name = $('#name').val();
+      let height = $('#height').val();
+      let weight = $('#weight').val();
+      let material = $('#material').val();
+      let description = $('#description').val();
+      let price = $('#price').val();
+      let categories = [];
+      $('input[name="categoryIds"]:checked').each(function() {
+        categories.push({id: $(this).val()});
+      });
+      let newPicture = {
+        name: name,
+        height: height,
+        weight: weight,
+        material: material,
+        description: description,
+        price: price,
+        categories: categories
+      };
+      $.ajax({
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        type: "POST",
+        data: JSON.stringify(newPicture),
+        url: "http://localhost:8080/api/picture",
+        success: successHandler
+
+      });
+      //chặn sự kiện mặc định của thẻ
+      event.preventDefault();
+    }
+
+    $(function () {
+      successHandler()
+    });
+    function successHandler() {
+      $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/",
+        success: function (data) {
+          let content = '    <tr>\n' +
+                  '        <td>name</td>\n' +
+                  '        <td>height</td>\n' +
+                  '        <td>weight</td>\n' +
+                  '        <td>material</td>\n' +
+                  '        <td>description</td>\n' +
+                  '        <td>Price</td>\n' +
+                  '        <td>Category</td>\n' +
+                  '        <td>edit</td>\n' +
+                  '        <td>Delete</td>\n' +
+                  '    </tr>';
+          for (let i = 0; i < data.length; i++) {
+            content += getPicture(data[i]);
+          }
+          document.getElementById('pictureList').innerHTML = content;
+        }
+      });
+    }
+
+    function getPicture(picture) {
+      let categories = "";
+      for (let category of picture.categories) {
+        categories += category.name + ", ";
+      }
+      categories = categories.slice(0, -2);
+
+      return `<tr><td>${picture.name}</td><td>${picture.height}</td><td>${picture.weight}</td>
+    <td>${picture.material}</td><td>${picture.description}</td><td>${picture.price}</td>
+    <td>${categories}</td>
+    <td><button class="editPicture" onclick="editById(${picture.id})">Edit</button></td>
+    <td><button class="deletePicture" onclick="deleteById(${picture.id})">Delete</button></td>
+    </tr>`;
+    }
+
+    function deleteById(id) {
+      $.ajax({
+        type: "DELETE",
+        url: "http://localhost:8080/api/picture/" + id,
+        success() {
+          successHandler();
+        }
+      });
+    }
+    function editById(id) {
+      // Lấy thông tin hình ảnh cần chỉnh sửa
+      $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/api/picture/" + id,
+        success: function (picture) {
+          // Đổ thông tin hình ảnh vào form chỉnh sửa
+          $('#name').val(picture.name);
+          $('#height').val(picture.height);
+          $('#weight').val(picture.weight);
+          $('#material').val(picture.material);
+          $('#description').val(picture.description);
+          $('#price').val(picture.price);
+          let selectedCategoryIds = picture.categories.map(category => category.id);
+          $('input[name="categoryIds"]').each(function() {
+            if (selectedCategoryIds.includes(parseInt($(this).val()))) {
+              $(this).prop('checked', true);
+            }
+          });
+
+          // Thêm sự kiện submit cho form chỉnh sửa
+          $('#add-picture').off('submit').on('submit', function (event) {
+            event.preventDefault();
+
+
+            // Lấy thông tin hình ảnh sau khi chỉnh sửa
+            let name = $('#name').val();
+            let height = $('#height').val();
+            let weight = $('#weight').val();
+            let material = $('#material').val();
+            let description = $('#description').val();
+            let price = $('#price').val();
+            let categories = [];
+            $('input[name="categoryIds"]:checked').each(function() {
+              categories.push({id: parseInt($(this).val())});
+            });
+            let updatedPicture = {
+              id: picture.id,
+              name: name,
+              height: height,
+              weight: weight,
+              material: material,
+              description: description,
+              price: price
+            };
+
+            $.ajax({
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              type: "PUT",
+              data: JSON.stringify(updatedPicture),
+              url: "http://localhost:8080/api/picture/" + id,
+              success: function () {
+                successHandler();
+              }
+            });
+          });
+        }
+      });
+    }
+  </script>
+</head>
+<body>
+<form id="add-picture">
+  <table>
+    <tr>
+      <td>Name:</td>
+      <td><input type="text" id="name" placeholder="name"></td>
+    </tr>
+    <tr>
+      <td>height:</td>
+      <td><input type="text" id="height" placeholder="height"></td>
+    </tr>
+    <tr>
+      <td>weight:</td>
+      <td><input type="text" id="weight" placeholder="weight"></td>
+    </tr>
+    <tr>
+      <td>material:</td>
+      <td><input type="text" id="material" placeholder="material"></td>
+    </tr>
+    <tr>
+      <td>description:</td>
+      <td><input type="text" id="description" placeholder="description"></td>
+    </tr>
+    <tr>
+      <td>Price:</td>
+      <td><input type="text" id="price" placeholder="price"></td>
+    </tr>
+    <tr>
+      <td>Category:</td>
+      <td>
+        <div id="form-group">
+          <div th:each="category : ${categories}">
+            <input type="checkbox"  name="categoryIds" th:value="${category.categoryId}" >
+            <label th:text="${category.name}"></label><br>
+          </div>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><input type="submit" value="Add" onclick="addNewPicture()"></td>
+    </tr>
+  </table>
+</form>
+<h1>Picture List</h1>
+<table id="pictureList">
+  <tr>
+    <td>Name</td>
+    <td>Height</td>
+    <td>Weight</td>
+    <td>Material</td>
+    <td>Description</td>
+    <td>Price</td>
+    <th>Categories</th>
+    <td>Edit</td>
+    <td>Delete</td>
+  </tr>
+
+</table>
+</body>
+</html>

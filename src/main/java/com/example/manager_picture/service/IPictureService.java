@@ -6,4 +6,5 @@ import com.example.manager_picture.model.Picture;
 
 public interface IPictureService extends IGeneralService<Picture>{
     Iterable<Picture> findAllByCategory(Category category);
+    Iterable<Picture> findAllByNameContaining(String name);
 }

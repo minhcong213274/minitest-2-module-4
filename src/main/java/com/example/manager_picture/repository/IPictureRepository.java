@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 
 public interface IPictureRepository extends JpaRepository<Picture, Long> {
     Iterable<Picture> findAllByCategory(Category category);
+    Iterable<Picture> findAllByNameContaining(String name);
 }
