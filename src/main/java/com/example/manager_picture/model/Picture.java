@@ -19,7 +19,6 @@ public class Picture {
     private int price;
     @ManyToMany
     @JoinTable(name = "picture_category",joinColumns = @JoinColumn(name = "pictureId"),inverseJoinColumns = @JoinColumn(name = "categoryId",nullable = true))
-    @JsonBackReference
     private Set<Category> category;
 
     public Picture() {

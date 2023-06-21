@@ -4,16 +4,13 @@ import com.example.manager_picture.model.Category;
 import com.example.manager_picture.model.Picture;
 import com.example.manager_picture.service.ICategoryService;
 import com.example.manager_picture.service.IPictureService;
-import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @CrossOrigin("*")
@@ -24,13 +21,16 @@ public class PictureController {
     @Autowired
     private ICategoryService iCategoryService;
     @GetMapping("/categories")
-    public ResponseEntity<Set<Category>> getCategories() {
-        Set<Category> categories = (Set<Category>) iCategoryService.findAll();
-        return ResponseEntity.ok().body(categories);
+    public ResponseEntity<Iterable<Category>> getCategories() {
+        return new  ResponseEntity<>(iCategoryService.findAll(), HttpStatus.OK);
     }
-    @GetMapping
+    @GetMapping("/list")
     public ResponseEntity<Iterable<Picture>> allPicture() {
         return new ResponseEntity<>(iPictureService.findAll(), HttpStatus.OK);
+    }
+    @GetMapping("/search/{name}")
+    public ResponseEntity<Iterable<Picture>> searchByName(@PathVariable("name") String name) {
+        return new ResponseEntity<>(iPictureService.findAllByNameContaining(name), HttpStatus.OK);
     }
 
     @PostMapping("/api/picture")

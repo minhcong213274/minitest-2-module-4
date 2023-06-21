@@ -1,6 +1,7 @@
 package com.example.manager_picture.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -14,7 +15,7 @@ public class Category {
     private Long categoryId;
     private String name;
     @ManyToMany(mappedBy = "category")
-    @JsonBackReference
+    @JsonIgnore
     private Set<Picture> pictures;
 
     public Category() {
