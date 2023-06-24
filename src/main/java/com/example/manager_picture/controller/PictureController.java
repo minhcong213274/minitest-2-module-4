@@ -34,7 +34,7 @@ public class PictureController {
     }
 
     @PostMapping("/api/picture")
-    public ResponseEntity<Picture> createSmartphone(@RequestBody Picture picture) {
+    public ResponseEntity<Picture> createPicture(@RequestBody Picture picture) {
         return new ResponseEntity<>(iPictureService.save(picture), HttpStatus.CREATED);
     }
     @DeleteMapping("/api/picture/{id}")
@@ -60,14 +60,8 @@ public class PictureController {
         if (!pictureOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Picture updatedPicture = pictureOptional.get();
-        updatedPicture.setName(picture.getName());
-        updatedPicture.setHeight(picture.getHeight());
-        updatedPicture.setWeight(picture.getWeight());
-        updatedPicture.setMaterial(picture.getMaterial());
-        updatedPicture.setDescription(picture.getDescription());
-        updatedPicture.setPrice(picture.getPrice());
-        return new ResponseEntity<>(iPictureService.save(updatedPicture), HttpStatus.OK);
+        picture.setPictureId(id);
+        return new ResponseEntity<>(iPictureService.save(picture), HttpStatus.OK);
     }
 
 

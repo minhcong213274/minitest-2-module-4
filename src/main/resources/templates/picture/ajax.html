@@ -183,7 +183,10 @@
             let price = $('#price').val();
             let categories = [];
             $('input[name="categoryIds"]:checked').each(function () {
-                categories.push({id: parseInt($(this).val())});
+                var categoryId = $(this).attr('id');
+                console.log(categoryId)
+                var categoryName = $(this).val();
+                categories.push({categoryId,categoryName});
             });
             let id = $('#idItem').val();
             let updatedPicture = {
@@ -193,7 +196,8 @@
                 weight: weight,
                 material: material,
                 description: description,
-                price: price
+                price: price,
+                category:categories
             };
 
             $.ajax({
@@ -242,10 +246,6 @@
             <td>Category:</td>
             <td>
                 <div id="form-group">
-                    <div th:each="category : ${categories}">
-                        <input type="checkbox" name="categoryIds" th:value="${category.categoryId}">
-                        <label th:text="${category.name}"></label><br>
-                    </div>
                 </div>
             </td>
         </tr>
