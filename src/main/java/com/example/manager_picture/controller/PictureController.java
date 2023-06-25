@@ -38,13 +38,9 @@ public class PictureController {
         return new ResponseEntity<>(iPictureService.save(picture), HttpStatus.CREATED);
     }
     @DeleteMapping("/api/picture/{id}")
-    public ResponseEntity<Picture> deletePicture(@PathVariable Long id) {
+    public void deletePicture(@PathVariable Long id) {
         Optional<Picture> pictureOptional = iPictureService.findById(id);
-        if (!pictureOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         iPictureService.remove(id);
-        return new ResponseEntity<>(pictureOptional.get(), HttpStatus.NO_CONTENT);
     }
     @GetMapping("/api/picture/{id}")
     public ResponseEntity<Picture> getPictureById(@PathVariable Long id) {
@@ -91,7 +87,6 @@ public class PictureController {
     public ModelAndView listPictureByName(@ModelAttribute("search") String name) {
         ModelAndView modelAndView = new ModelAndView("/picture/list");
         modelAndView.addObject("pictures", iPictureService.findAllByNameContaining(name));
-        modelAndView.addObject("message", "New picture created successfully");
         return modelAndView;
     }
     @GetMapping("/pictures")

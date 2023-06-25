@@ -144,9 +144,9 @@
             $.ajax({
                 type: "DELETE",
                 url: "http://localhost:8080/api/picture/" + id,
-                success() {
+                success() {successHandler();
                 }
-            });successHandler();
+            });
         }
 
         function editById(id) {
